@@ -13,7 +13,6 @@ class AdvancedReportData(models.Model):
     date = fields.Date(string="Date", default=fields.Date.context_today)
     responsible_id = fields.Many2one('res.users', string="Analyst", default=lambda self: self.env.user)
 
-    # --- الحقول الناقصة اللي سببت المشكلة ---
     company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', string='Currency')
     # ---------------------------------------
@@ -38,7 +37,6 @@ class AdvancedReportLine(models.Model):
     price_unit = fields.Float(string="Unit Price")
     subtotal = fields.Float(string="Subtotal", compute="_compute_subtotal", store=True)
 
-    # يفضل إضافته هنا أيضاً لتسهيل عمل الـ Widgets في الـ Editable List
     currency_id = fields.Many2one(related='report_id.currency_id', depends=['report_id.currency_id'], store=True)
 
     @api.depends('quantity', 'price_unit')
