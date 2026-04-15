@@ -1,0 +1,10 @@
+<odoo>
+    <record id="action_report_advanced_data" model="ir.actions.report">
+        <field name="name">Advanced Analysis Report</field>
+        <field name="model">report.advanced.data</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">advanced_reporting_system.report_advanced_data_template</field>
+        <field name="report_file">advanced_reporting_system.report_advanced_data_template</field>
+        <field name="print_report_name">'Report - %s' % (object.name)</field>
+        </record>
+</odoo>

@@ -1,0 +1,129 @@
+<odoo>
+    <record id="view_advanced_report_search" model="ir.ui.view">
+        <field name="name">report.advanced.data.search</field>
+        <field name="model">report.advanced.data</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="responsible_id"/>
+                <filter string="Financial" name="financial" domain="[('report_type', '=', 'financial')]"/>
+                <filter string="Sales" name="sales" domain="[('report_type', '=', 'sales')]"/>
+                <separator/>
+                <filter string="My Reports" name="my_reports" domain="[('responsible_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_by_type" context="{'group_by': 'report_type'}"/>
+                    <filter string="Analyst" name="group_by_user" context="{'group_by': 'responsible_id'}"/>
+                    <filter string="Date" name="group_by_date" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_advanced_report_list" model="ir.ui.view">
+        <field name="name">report.advanced.data.list</field>
+        <field name="model">report.advanced.data</field>
+        <field name="arch" type="xml">
+            <list decoration-info="report_type == 'sales'" decoration-success="report_type == 'financial'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="report_type" widget="badge" decoration-info="report_type == 'sales'" decoration-success="report_type == 'financial'"/>
+                <field name="responsible_id" widget="many2one_avatar_user"/>
+                <field name="total_amount" sum="Total Value" widget="monetary"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_advanced_report_form" model="ir.ui.view">
+        <field name="name">report.advanced.data.form</field>
+        <field name="model">report.advanced.data</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="%(advanced_reporting_system.action_report_format_wizard)d"
+                            type="action"
+                            string="Print Report"
+                            class="oe_highlight"
+                            icon="fa-print"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Report Title"/>
+                        <h1><field name="name" placeholder="e.g. Q1 Sales Analysis"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="report_type"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="responsible_id" widget="many2one_avatar_user"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detailed Data Analytics" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
+                                    <field name="price_unit"/>
+                                    <field name="subtotal" sum="Subtotal" widget="monetary"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="total_amount" widget="monetary"/>
+                            </group>
+                        </page>
+                        <page string="Management Summary" name="notes">
+                            <field name="notes" widget="html" placeholder="Describe the report findings here..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_advanced_report_graph" model="ir.ui.view">
+        <field name="name">report.advanced.data.graph</field>
+        <field name="model">report.advanced.data</field>
+        <field name="arch" type="xml">
+            <graph string="Reports Analysis" type="bar" sample="1">
+                <field name="report_type"/>
+                <field name="total_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_advanced_report_pivot" model="ir.ui.view">
+        <field name="name">report.advanced.data.pivot</field>
+        <field name="model">report.advanced.data</field>
+        <field name="arch" type="xml">
+            <pivot string="Analytics" sample="1">
+                <field name="date" type="row"/>
+                <field name="report_type" type="col"/>
+                <field name="total_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_advanced_report" model="ir.actions.act_window">
+        <field name="name">Advanced Reports Hub</field>
+        <field name="res_model">report.advanced.data</field>
+        <field name="view_mode">list,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_advanced_report_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first advanced report!
+            </p>
+            <p>
+                Generate professional PDF and Excel summaries of your data.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_report_root" name="Reporting Hub" sequence="10"/>
+    <menuitem id="menu_report_main" name="Reports Archive" parent="menu_report_root" action="action_advanced_report" sequence="1"/>
+</odoo>
